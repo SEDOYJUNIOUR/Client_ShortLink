@@ -18,7 +18,6 @@ const Profile = () => {
 	const [save, setSave] = useState(true)
 	const [update, setUpdate] = useState(true)
 	
-	
 	React.useEffect(() => {
 		dispatch(fetchProfile());
 		dispatch(fetchUserLinks());
@@ -26,7 +25,6 @@ const Profile = () => {
 	}, []);
 	const {profile, links, avatar} = useSelector((state) => state.links);
 	const isLinksLoading = links.status === "loading";
-	
 	const {
 		register,
 		handleSubmit,
@@ -42,11 +40,10 @@ const Profile = () => {
 		mode: "onChange",
 	});
 	if (update) {
-		if (links.status === 'loaded') {
+		if (links.status === 'loaded' && profile.status === 'loaded' && avatar.status === 'loaded') {
 			setValue('username', profile.items.username)
 			setValue('mail', profile.items.mail)
 			setValue('avatar', avatar.img)
-			console.log(1)
 			setUpdate(false)
 		}
 	}
@@ -69,9 +66,7 @@ const Profile = () => {
 		});
 		if (data.error?.message) {
 			return alert("Данные введены не правильно");
-		} else {
 		}
-		console.log(save)
 	};
 	return (
 		<div>
@@ -120,7 +115,7 @@ const Profile = () => {
 						/><br></br><br></br>
 					</center>
 					<Scrollbars style={{width: 420, height: 156, left: 22}}>
-						{(isLinksLoading ? [...Array(5)] : links.items).map((obj, index) =>
+						{links.items.length !== 0 ? ((isLinksLoading ? [...Array(5)] : links.items).map((obj, index) =>
 							isLinksLoading ? (
 								<Created_ShortLinks key={index} isLoading={true}/>
 							) : (
@@ -129,13 +124,14 @@ const Profile = () => {
 									link={obj.link}
 								/>
 							)
-						)}
+						)) : (<Created_ShortLinks
+						/>)}
 					</Scrollbars>
 					<div className={'ConteinerBtnProfile'}>
 						{save ? (
 							<>
 								<Link to="/shortLink">
-									<Button sx={{fontSize: 15}}>Назад</Button>
+									<Button sx={{fontSize: 15}} onClick={() => setUpdate(true)}>Назад</Button>
 								</Link>
 								<Button sx={{fontSize: 15}} type='btn' onClick={() => setSave(!save)}>Изменить</Button>
 							</>
